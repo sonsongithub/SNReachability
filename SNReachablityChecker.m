@@ -32,9 +32,9 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 
 @interface SNReachablityChecker(private)
 
+@property (nonatomic, assign) SCNetworkReachabilityRef networkReachability;
+
 + (SNReachablityChecker*)reachabilityWithAddress:(const struct sockaddr_in*)hostAddress;
-- (void)start;
-- (void)stop;
 
 @end
 
@@ -51,14 +51,13 @@ NSString *SNReachablityDidChangeNotification = @"SNReachablityDidChangeNotificat
 
 #pragma mark - Class method(Private)
 
-+ (SNReachablityChecker*)reachabilityWithAddress:(const struct sockaddr_in*)hostAddress {
++ (SNReachablityChecker*)reachabilityWithAddress:(const struct sockaddr_in*)hostAddress type:(SNReachablityCheckerType)type{
 	SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, (const struct sockaddr*)hostAddress);
 	SNReachablityChecker* retVal = NULL;
 	if (reachability != NULL) {
-		retVal = [[self alloc] init];
+		retVal = [[self alloc] initWithType:type];
 		if (retVal != NULL) {
 			retVal.networkReachability = reachability;
-			retVal.type = SNReachablityCheckerInternetConnectivity;
 		}
 	}
 	return retVal;
@@ -71,10 +70,9 @@ NSString *SNReachablityDidChangeNotification = @"SNReachablityDidChangeNotificat
 	SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithName(NULL, [hostName UTF8String]);
 	if(reachability!= NULL)
 	{
-		retVal= [[self alloc] init];
+		retVal= [[self alloc] initWithType:SNReachablityCheckerHostConnectivity];
 		if (retVal != NULL) {
 			retVal.networkReachability = reachability;
-			retVal.type = SNReachablityCheckerHostConnectivity;
 		}
 	}
 	return retVal;
@@ -86,11 +84,7 @@ NSString *SNReachablityDidChangeNotification = @"SNReachablityDidChangeNotificat
 	zeroAddress.sin_len = sizeof(zeroAddress);
 	zeroAddress.sin_family = AF_INET;
 	
-	SNReachablityChecker* retVal = [self reachabilityWithAddress:&zeroAddress];
-	if (retVal != NULL) {
-		retVal.type = SNReachablityCheckerInternetConnectivity;
-	}
-	return retVal;
+	return [self reachabilityWithAddress:&zeroAddress];
 }
 
 + (SNReachablityChecker*)reachabilityForLocalWiFi {
@@ -101,14 +95,16 @@ NSString *SNReachablityDidChangeNotification = @"SNReachablityDidChangeNotificat
 	// IN_LINKLOCALNETNUM is defined in <netinet/in.h> as 169.254.0.0
 	localWifiAddress.sin_addr.s_addr = htonl(IN_LINKLOCALNETNUM);
 	
-	SNReachablityChecker* retVal = [self reachabilityWithAddress:&localWifiAddress];
-	if (retVal != NULL) {
-		retVal.type = SNReachablityCheckerLocalWiFiConnectivity;
-	}
-	return retVal;
+	return [self reachabilityWithAddress:&localWifiAddress];
 }
 
 #pragma mark - Instance method
+
+- (id)initWithType:(SNReachablityCheckerType)type {
+	self = [super init];
+	_type = type;
+	return self;
+}
 
 - (BOOL)start {
 	BOOL retVal = NO;

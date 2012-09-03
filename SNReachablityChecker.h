@@ -25,8 +25,8 @@ typedef enum SNReachablityCheckerStatus_ {
 
 @interface SNReachablityChecker : NSObject
 
-@property (nonatomic, assign) SCNetworkReachabilityRef networkReachability;
-@property (nonatomic, assign) SNReachablityCheckerType type;
+@property (nonatomic, readonly) SNReachablityCheckerType type;
+@property (nonatomic, readonly) SNReachablityCheckerStatus status;
 
 + (SNReachablityChecker*)reachabilityWithHostName:(NSString*)hostName;
 + (SNReachablityChecker*)reachabilityForInternetConnection;
@@ -34,6 +34,5 @@ typedef enum SNReachablityCheckerStatus_ {
 
 - (BOOL)start;
 - (void)stop;
-- (SNReachablityCheckerStatus)status;
 
 @end
