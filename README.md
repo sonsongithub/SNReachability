@@ -4,9 +4,13 @@ Network reachability check class for iOS
 SNReachablityChecker class notifies an observer of changing network status.
 The notification informs reachability and what kind of methods a device uses in order to reach the internet, local Wi-Fi or specified host.
 
+---
+
 License
 =======
 BSD License.
+
+---
 
 SNReachablityChecker Reference
 =======
@@ -51,8 +55,13 @@ The receiver's status.
 ###Discussion
 Return the status of current network, expressed "SNReachablityCheckerStatus".
 
+---
+
 Constants
 ======
+
+##SNReachablityCheckerType
+
 	typedef enum SNReachablityCheckerType_ {
 		SNReachablityCheckerHostConnectivity		= 0,
 		SNReachablityCheckerInternetConnectivity	= 1,
@@ -67,6 +76,8 @@ Returned this vaue if you created the instance of SNReachabilityChecker using re
 
 ###SNReachablityCheckerLocalWiFiConnectivity
 Returned this vaue if you created the instance of SNReachabilityChecker using reachabilityForLocalWiFi.
+
+##SNReachablityCheckerStatus
 
 	typedef enum SNReachablityCheckerStatus_ {
 		SNReachablityCheckerNotReachable			= 0,
@@ -83,12 +94,17 @@ Returned this value when specified host or network is reachable using Wi-Fi.
 ###SNReachablityCheckerReachableViaWWAN
 Returned this value when specified host or network is reachable using WWAN.
 
+---
+
 Notifications
 ======
 SNReachablityChecker notifies it when network status changes.
 
 ###SNReachablityDidChangeNotification
-Posted when the network condition has been changed.
+Posted when the network condition has been changed.  
+The object is an SNReachablityChecker object.
+
+---
 
 Blog
 =======
